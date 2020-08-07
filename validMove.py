@@ -1,13 +1,13 @@
 class validMove:
-    def __init__(self, x, y, nRotation, piece, pieces):
+    def __init__(self, x, y, nRotation, piece, pieces,holesFactor,linesFactor,heightFactor):
         self.x = x
         self.y = y
         self.nRotation = nRotation
         self.piece = piece
         self.pieces = pieces
-        self.score = self.score()
+        self.score = self.score(holesFactor,linesFactor,heightFactor)
 
-    def score(self):
+    def score(self,holesFactor,linesFactor,heightFactor):
         nHoles = 4
 
         flag = False
@@ -53,4 +53,4 @@ class validMove:
         for tetra in self.piece.tetras:
             maxY = tetra.y if tetra.y > maxY else maxY
 
-        return 0 - (nHoles*10) + (maxY/100) + (linesCleared*1000)
+        return 0 - (nHoles*holesFactor) + (maxY/heightFactor) + (linesCleared*linesCleared)

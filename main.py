@@ -7,8 +7,16 @@ import copy as cp
 import pudb
 #pu.db
 
+def reset():
+    global pieces
+    global totalPoints
+    global run
 
-def moveCalculator():
+    pieces = []
+    totalPoints = 0
+    run = True
+
+def moveCalculator(holesFactor,linesFactor,heightFactor):
     global activePiece
     global pieces
 
@@ -27,7 +35,7 @@ def moveCalculator():
             while piece.isActive:
                 piece.move(pieces)
             piece.isActive = True
-            validMoves.append(validMove(piece.x, piece.y, i, piece, pieces))
+            validMoves.append(validMove(piece.x, piece.y, i, piece, pieces,holesFactor,linesFactor,heightFactor))
             prevX = piece.x
             piece.y = 25
             piece.generator()
@@ -67,12 +75,11 @@ def applyMove(move):
         activePiece.generator()
         while activePiece.isActive:
             activePiece.move(pieces)
-            draw()
+            #draw()
 
 
-def main():
+def main(holesFactor,linesFactor,heightFactor):
     global run
-    global stop
     global counter
     global buff
     global pieces
@@ -98,7 +105,7 @@ def main():
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                     stop = False
+                     run = False
                      run = False
                 if (event.key == pg.K_r):
                     activePiece.rotate()
@@ -112,9 +119,7 @@ def main():
         if (counter % 100) == 0:
             activePiece.move(pieces)
 
-        #applyMove(moveCalculator())
-        draw()
-        clock.tick(100)
+        applyMove(moveCalculator(holesFactor,linesFactor,heightFactor))
 
         for piece in pieces:
             if piece.y <= 25:
@@ -203,7 +208,6 @@ def draw():
     win.blit(text, textRect)
     pg.display.update()
 
-    #clock.tick(30)
     pg.display.flip()
     win.fill((20, 20, 20))
 
@@ -216,7 +220,6 @@ clock = pg.time.Clock()
 size = 50
 totalPoints = 0
 run = True
-stop = True
 prev = 0
 pieces = []
 
@@ -255,9 +258,12 @@ overlay[0].width = 500
 
 font = pg.font.Font('freesansbold.ttf', 32)
 
-while stop:
-    main()
-    if not run:
-        pieces = []
-        totalPoints = 0
-        run = True
+def game(holesFactor,linesFactor,heightFactor):
+    while run:
+        main(holesFactor,linesFactor,heightFactor)
+    print('-------------------')
+    print(holesFactor)
+    print(linesFactor)
+    print(heightFactor)
+    print('-------------------')
+    return totalPoints
