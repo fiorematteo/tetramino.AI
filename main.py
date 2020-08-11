@@ -78,7 +78,7 @@ def applyMove(move):
             #draw()
 
 
-def main(holesFactor,linesFactor,heightFactor):
+def main(holesFactor,linesFactor,heightFactor,auto):
     global run
     global counter
     global buff
@@ -119,7 +119,11 @@ def main(holesFactor,linesFactor,heightFactor):
         if (counter % 100) == 0:
             activePiece.move(pieces)
 
-        applyMove(moveCalculator(holesFactor,linesFactor,heightFactor))
+        if auto:
+            applyMove(moveCalculator(holesFactor,linesFactor,heightFactor))
+        else:
+            draw()
+            clock.tick(100)
 
         for piece in pieces:
             if piece.y <= 25:
@@ -260,10 +264,14 @@ font = pg.font.Font('freesansbold.ttf', 32)
 
 def game(holesFactor,linesFactor,heightFactor):
     while run:
-        main(holesFactor,linesFactor,heightFactor)
+        main(holesFactor,linesFactor,heightFactor,True)
     print('-------------------')
     print(holesFactor)
     print(linesFactor)
     print(heightFactor)
     print('-------------------')
     return totalPoints
+
+if __name__ == '__main__':
+    while run:
+        main(1,1,1,False)
