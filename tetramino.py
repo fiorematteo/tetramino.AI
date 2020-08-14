@@ -12,6 +12,7 @@ class rect:
         self.width = size
         self.height = size
         self.color = color
+        self.marked = 0
 
     def draw(self):
         pg.draw.rect(self.win, self.color, (self.x, self.y, self.width, self.height), 0)
@@ -35,8 +36,8 @@ class tetramino:
         self.width = 50
         self.height = 50
         self.isActive = True
-        self.setup = shapes[setup]
-        self.color = colors[setup]
+        self.setup = tetramino.shapes[setup]
+        self.color = tetramino.colors[setup]
         self.tetras = []
         self.x = 250
         self.y = 25
@@ -127,3 +128,9 @@ class tetramino:
             for tetra in self.tetras:
                 tetra.x += self.width
             self.x += self.width
+
+    def gameOver(self):
+        for tetra in self.tetras:
+            if tetra.x <= 25:
+                return False
+        return True
