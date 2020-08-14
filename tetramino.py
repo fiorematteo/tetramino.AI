@@ -1,4 +1,5 @@
 import pygame as pg
+
 winX = 1050
 winY = 1050  
 
@@ -18,13 +19,24 @@ class rect:
 
 class tetramino:
 
-    def __init__(self, win, size, setup, color):
+    T_shape = [[True, True, True],[False, True, False],[False, False, False]]
+    I_shape = [[False, False, False, False],[True, True, True, True],[False, False, False, False],[False, False, False, False]]
+    Z_shape = [[True, True, False],[False, True, True],[False, False, False]]
+    O_shape = [[True, True],[True, True]]
+    S_shape = [[False, True, True],[True, True, False],[False, False, False]]
+    L_shape = [[False, True, False],[False, True, False],[True, True, False]]
+    J_shape = [[False, True, False],[False, True, False],[False, True, True]]
+    shapes = [T_shape, L_shape, J_shape, S_shape, Z_shape, O_shape, I_shape]
+
+    colors = [(255, 0, 255), (255, 100, 100), (0, 0, 255),(0, 255, 0), (255, 0, 0), (255, 255, 0), (0, 0, 150)]
+
+    def __init__(self, win, setup):
         self.win = win
-        self.width = size
-        self.height = size
+        self.width = 50
+        self.height = 50
         self.isActive = True
-        self.setup = setup
-        self.color = color
+        self.setup = shapes[setup]
+        self.color = colors[setup]
         self.tetras = []
         self.x = 250
         self.y = 25
