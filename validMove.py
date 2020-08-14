@@ -6,9 +6,9 @@ class validMove:
         self.piece = piece
         self.pieces = pieces
         self.score = self.score(holesFactor,linesFactor,heightFactor)
+    @staticmethod
     def normalize(min, max, value):
         return value-min/max-min
-
     def score(self,holesFactor,linesFactor,heightFactor):
         nHoles = 4
 
@@ -54,7 +54,7 @@ class validMove:
         maxY = -10
         for tetra in self.piece.tetras:
             maxY = tetra.y if tetra.y > maxY else maxY
-        maxY = normalize(0,1025,maxY)
-        nHoles = normalize(0,3,nHoles)
-        linesCleared = normalize(0,4,linesCleared)
+        maxY = self.normalize(0,1025,maxY)
+        nHoles = self.normalize(0,3,nHoles)
+        linesCleared = self.normalize(0,4,linesCleared)
         return (maxY*heightFactor) + (linesCleared*linesFactor) - (nHoles*holesFactor)

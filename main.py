@@ -67,7 +67,7 @@ def applyMove(move):
     global activePiece
     global pieces
 
-    if move != None:
+    if not move == None:
         while move.nRotation > 0:
             activePiece.rotate()
             move.nRotation -= 1
@@ -75,8 +75,7 @@ def applyMove(move):
         activePiece.generator()
         while activePiece.isActive:
             activePiece.move(pieces)
-            if draw:
-                draw()
+            #draw()
 
 
 def main(holesFactor,linesFactor,heightFactor,auto):
