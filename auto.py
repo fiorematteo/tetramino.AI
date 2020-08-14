@@ -8,31 +8,38 @@ class virtualPlayer:
     def __init__(self):
         self.evolveSpeed = 1.1
         self.data = [[],[],[],[]]
-        self.cicles = None
-        self.games = 2
+        self.cicles = 0
+        self.games = 0
+        self.drawing = False
 
-    def plotData(self):
+    def plotData(self, save = False):
+        ncicle = range(self.cicles)
         fig, (ax1, ax2) = plt.subplots(1, 2)
-        ax1.plot(self.cicles, data[0], label="points")
+        ax1.plot(ncicle, self.data[0], label="points")
         ax1.set_xlabel("cicle")
         ax1.set_ylabel("points")
-        ax2.plot(ncicle, data[1], "r", ncicle, data[2], "g", ncicle, data[3], "b")
+        ax2.plot(ncicle, self.data[1], "r", ncicle, self.data[2], "g", ncicle, self.data[3], "b")
         ax2.set_xlabel("cicle")
         ax2.set_ylabel("value")
         ax2.legend(('holes','lines','heights'))
-        plt.show()
+        if save:
+            plt.savefig("files/lastplot.svg", format="svg")
+        else:
+            plt.show()
     
     def saveDataToFile(self, filename):
-        with open(filename+".txt","w") as file:
+        with open("files/"+filename+".txt","w") as file:
             for inx in range(self.cicles):
                 file.write(f"|points = {self.data[0][inx]} | holef = {self.data[1][inx]} | linef = {self.data[2][inx]} | heightf = {self.data[3][inx]} |\n")
 
-    def startAi(self, cicles):
+    def startAi(self, cicles : int, games: int, drawing = False):
         self.cicles = cicles
+        self.games = games
+        self.drawing = drawing
         factors = [0,1,1,1]
         start_time = time()
         try:
-            with open("setup.txt","r") as file:
+            with open("files/setup.txt","r") as file:
                 factors[0] = float(file.readline())
                 factors[1] = float(file.readline())
                 factors[2] = float(file.readline())
@@ -42,7 +49,7 @@ class virtualPlayer:
 
         factors = self.evolve(factors)
 
-        with open("setup.txt","w") as file:
+        with open("files/setup.txt","w") as file:
             for i in factors:
                 file.write(str(i))
                 file.write("\n")
@@ -51,7 +58,7 @@ class virtualPlayer:
     def generation(self,holesFactor,linesFactor,heightFactor):
         points = 0
         for x in range(self.games):
-            points+=Tetris().start(AI(holesFactor,linesFactor,heightFactor),True)
+            points+=Tetris().start(AI(holesFactor,linesFactor,heightFactor),self.drawing)
         return (points/self.games,holesFactor,linesFactor,heightFactor)
         
     @staticmethod
@@ -70,11 +77,12 @@ class virtualPlayer:
             
             factors = max(gen1,gen2,gen3)
 
-            for x in range(3):
+            for x in range(4):
                 self.data[x].append(factors[x])
         return factors
 
 vp = virtualPlayer()
-vp.startAi(2)
-#vp.saveDataToFile('puttana_madonna')
-#vp.plotData()
+vp.startAi(3, 1)
+print(vp.data)
+vp.plotData()
+vp.saveDataToFile('data')
