@@ -4,7 +4,7 @@ from tetramino import *
 from validMove import *
 import random as rm
 import copy as cp
-import pudb
+#import pudb
 #pu.db
 
 def reset():
@@ -67,7 +67,7 @@ def applyMove(move):
     global activePiece
     global pieces
 
-    if not move == None:
+    if move != None:
         while move.nRotation > 0:
             activePiece.rotate()
             move.nRotation -= 1
@@ -75,7 +75,8 @@ def applyMove(move):
         activePiece.generator()
         while activePiece.isActive:
             activePiece.move(pieces)
-            #draw()
+            if draw:
+                draw()
 
 
 def main(holesFactor,linesFactor,heightFactor,auto):
@@ -95,12 +96,9 @@ def main(holesFactor,linesFactor,heightFactor,auto):
     prev.generator()
 
     while not activePiece == 0:
-
         counter += 1
-
         if not len(pieces) == 0:
             cleanCheck(pieces)
-
         k = 0
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
@@ -115,21 +113,16 @@ def main(holesFactor,linesFactor,heightFactor,auto):
                     activePiece.right(pieces)
                 if event.key == pg.K_DOWN:
                     activePiece.move(pieces)
-
         if (counter % 100) == 0:
             activePiece.move(pieces)
-
         if auto:
             applyMove(moveCalculator(holesFactor,linesFactor,heightFactor))
         else:
             draw()
-            clock.tick(100)
-
+            #clock.tick(1000)
         for piece in pieces:
             if piece.y <= 25:
                 run = False
-
-
         if not activePiece.isActive:
             for tetra in activePiece.tetras:
                 tetra.isActive = False
@@ -265,13 +258,8 @@ font = pg.font.Font('freesansbold.ttf', 32)
 def game(holesFactor,linesFactor,heightFactor):
     while run:
         main(holesFactor,linesFactor,heightFactor,True)
-    print('-------------------')
-    print(holesFactor)
-    print(linesFactor)
-    print(heightFactor)
-    print('-------------------')
     return totalPoints
 
 if __name__ == '__main__':
-    while run:
-        main(1,1,1,False)
+    main(1,1,1,False)
+        

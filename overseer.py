@@ -1,4 +1,7 @@
 from main import *
+import matplotlib.pyplot as plt
+
+evolve_speed = 1.1
 
 def max(a,b,c):
     if a[0] > b[0]:
@@ -8,23 +11,49 @@ def max(a,b,c):
         if b[0] > c[0]:
             return b
     return c
+def plot(gens):
+    length = range(len(gens))
+    data = [[],[],[],[]]
+    for x in length:
+        data[0].append(gens[x][0])
+        data[1].append(gens[x][1])
+        data[2].append(gens[x][2])
+        data[3].append(gens[x][3])
+    
 
-def generation(holesFactor,linesFactor,heightFactor):
-
+def generation(holesFactor,linesFactor,heightFactor,generation):
     points = []
-    for x in range(10):
+    print("------------------")
+    for x in range(1):
         points.append(game(holesFactor,linesFactor,heightFactor))
         reset()
-        print(str(x)+': '+str(points[x]))
-    return (sum(points) / len(points)), holesFactor, linesFactor, heightFactor
+    print(f"Generation {generation}: ho={holesFactor},l={linesFactor},he={heightFactor},p={sum(points)/len(points)}")
+    return (sum(points) / len(points), holesFactor, linesFactor, heightFactor)
 
-def evolve(bestGen):
+def evolve(bestGen, cicles):
+    gens = []
+    for r in range(cicles):
+        gen1 = generation(bestGen[1]*evolve_speed,bestGen[2],bestGen[3],1)
+        gen2 = generation(bestGen[1],bestGen[2]*evolve_speed,bestGen[3],2)
+        gen3 = generation(bestGen[1],bestGen[2],bestGen[3]*evolve_speed,3)
+        bestGen = max(gen1,gen2,gen3)
+        gens.append(bestGen)
+        print(f"cicle = {r}")
+    plot(gens)
+    return bestGen
 
-    gen1 = generation(bestGen[1]+100,bestGen[2],bestGen[3])
-    gen2 = generation(bestGen[1],bestGen[2]+100,bestGen[3])
-    gen3 = generation(bestGen[1],bestGen[2],bestGen[3]+100)
+def load_ai():
+    ai = []
+    with open("score.txt","r") as file:
+        ai[0] = float(file.readline())
+        ai[1] = float(file.readline())
+        ai[2] = float(file.readline())
+        ai[3] = float(file.readline())
+    ai = evolve(ai, 5)
+    with open("score.txt","w") as file:
+        for i in ai:
+            file.write(i)
+            file.write("\n")
+    print(f"end -> {ai}")
 
-    bestGen = max(gen1,gen2,gen3)
-    evolve(bestGen)
-
-evolve((0,1,1,1))
+load_ai()
