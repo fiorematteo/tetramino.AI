@@ -6,21 +6,23 @@ from tetramino import *
 class Tetris:
     
     font = None
+    clock = pg.time.Clock()
 
     def __init__(self):
         self.win = None
         self.run = True
         self.activePiece = None
-        self.nextPieceNumb = None
         self.nextPiece = None
         self.pieces = []
         self.points = 0
-    
+        self.clockSpeed = 200
+
     def start(self):
         pg.init()
         self.win = pg.display.set_mode((winX, winY))
         Tetris.font = pg.font.Font('freesansbold.ttf', 32)
         self.game()
+        print("gameover")
 
     def drawGUI(self):
         pg.draw.rect(self.win, (255,255,255), (50, 25, 500, winY-50), 1)
@@ -39,24 +41,33 @@ class Tetris:
         self.activePiece.draw()
         self.nextPiece.draw()
         self.drawTEXT()
-
         pg.display.flip()
         self.win.fill((20,20,20))
+        Tetris.clock.tick(self.clockSpeed)
         
+    def swapPieces(self):
+        for tetra in self.activePiece.tetras:
+            self.pieces.append(tetra)
+        self.activePiece = self.nextPiece
+        self.nextPiece = tetramino(self.win, randint(0,6))
+        self.nextPiece.x = 600
+        self.nextPiece.y = 100
 
     def eventLoop(self):
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.run = False
-                if (event.key == pg.K_r):
+                elif (event.key == pg.K_r):
                     self.activePiece.rotate()
-                if event.key == pg.K_LEFT:
+                elif event.key == pg.K_LEFT:
                     self.activePiece.left(self.pieces)
-                if event.key == pg.K_RIGHT:
+                elif event.key == pg.K_RIGHT:
                     self.activePiece.right(self.pieces)
-                if event.key == pg.K_DOWN:
+                elif event.key == pg.K_DOWN:
                     self.activePiece.move(self.pieces)
+            elif event.type == pg.QUIT:
+                slef.run = False
 
     def lineClear(self):
         lines={}
@@ -100,6 +111,8 @@ class Tetris:
 
     def game(self):
         self.nextPiece = tetramino(self.win, randint(0, 6))
+        self.nextPiece.x = 600
+        self.nextPiece.y = 100
         self.activePiece = tetramino(self.win, randint(0, 6))
         counter = 0
         while self.run:
@@ -109,11 +122,7 @@ class Tetris:
                 self.run = False
 
             if self.activePiece.isActive == False:
-                for tetra in self.activePiece.tetras:
-                    self.pieces.append(tetra)
-                self.activePiece = nextPiece
-                self.nextPiece = tetramino(self.win, randint(0,6))
-
+                self.swapPieces()
             if (counter % 100) == 0:
                 self.activePiece.move(self.pieces)
             counter += 1
