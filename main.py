@@ -2,6 +2,9 @@
 from random import randint
 #interni
 from tetramino import *
+from AI import *
+
+#import pudb; pu.db
 
 class Tetris:
     
@@ -15,12 +18,14 @@ class Tetris:
         self.nextPiece = None
         self.pieces = []
         self.points = 0
-        self.clockSpeed = 200
+        self.clockSpeed = 100
+        self.nextNumber = 0
 
     def start(self):
         pg.init()
         self.win = pg.display.set_mode((winX, winY))
         Tetris.font = pg.font.Font('freesansbold.ttf', 32)
+        pg.key.set_repeat(100, 50)
         self.game()
         print("gameover")
 
@@ -48,11 +53,16 @@ class Tetris:
     def swapPieces(self):
         for tetra in self.activePiece.tetras:
             self.pieces.append(tetra)
-        self.activePiece = self.nextPiece
-        self.nextPiece = tetramino(self.win, randint(0,6))
+        self.generateNextPiece()
+
+    def generateNextPiece(self):
+        self.activePiece = tetramino(self.win, self.nextNumber)
+        self.nextNumber = randint(0,6)
+        self.nextPiece = tetramino(self.win, self.nextNumber)
         self.nextPiece.x = 600
         self.nextPiece.y = 100
-
+        self.nextPiece.generator()
+        
     def eventLoop(self):
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
@@ -72,7 +82,6 @@ class Tetris:
     def lineClear(self):
         lines={}
         points = 0
-        removedLines = []
         for piece in self.pieces:
             if piece.y in lines:
                 lines[piece.y]+=1
@@ -81,21 +90,23 @@ class Tetris:
 
         for piece in self.pieces:
             if lines[piece.y] == 10:
-                if not piece.y in removedLines:
-                    removedLines.append(piece.y)
-                piece.marked == True
+                piece.marked = True
                 points += 1
         points /= 10
 
+        i = 0
+        while i < len(self.pieces):
+            if self.pieces[i].marked:
+                self.pieces.pop(i)
+            else:
+                i += 1
+
+        lines = {k: v for k, v in lines.items() if v == 10}
+
         for piece in self.pieces:
-            if piece.marked == True:
-                pieces.remove(piece)
-
-        lines = dict(filter(lambda elem: elem == 10,lines.items()))
-
-        for line in lines:
-            for piece in self.pieces:
-                if piece.y > lines[line]:
+            t = piece.y
+            for line in lines:
+                if t < line:
                     piece.y += piece.height
 
         
@@ -108,18 +119,25 @@ class Tetris:
         elif points == 4:
             self.points += 1200
 
+    def gameOver(self):
+        for piece in self.pieces:
+            if piece.y <= 25:
+                return False
+        return True
 
     def game(self):
-        self.nextPiece = tetramino(self.win, randint(0, 6))
-        self.nextPiece.x = 600
-        self.nextPiece.y = 100
-        self.activePiece = tetramino(self.win, randint(0, 6))
+        self.nextNumber = randint(0,6)
+        self.generateNextPiece()
         counter = 0
+        ai = AI(1,1,1)
         while self.run:
             self.eventLoop()
 
-            if not self.activePiece.gameOver():
+            if not self.gameOver():
                 self.run = False
+            
+            ai.moveCalculator(self.activePiece, self.pieces)
+            ai.applyMove(self.activePiece, self.pieces)
 
             if self.activePiece.isActive == False:
                 self.swapPieces()
@@ -127,7 +145,9 @@ class Tetris:
                 self.activePiece.move(self.pieces)
             counter += 1
 
+            
             self.lineClear()
             self.drawAll()
 
-Tetris().start()
+if __name__ == '__main__':
+    Tetris().start()

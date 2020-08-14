@@ -129,8 +129,3 @@ class tetramino:
                 tetra.x += self.width
             self.x += self.width
 
-    def gameOver(self):
-        for tetra in self.tetras:
-            if tetra.x <= 25:
-                return False
-        return True
