@@ -21,13 +21,13 @@ class Tetris:
         self.clockSpeed = 100
         self.nextNumber = 0
 
-    def start(self):
-        pg.init()
-        self.win = pg.display.set_mode((winX, winY))
-        Tetris.font = pg.font.Font('freesansbold.ttf', 32)
-        pg.key.set_repeat(100, 50)
-        self.game()
-        print("gameover")
+    def start(self,ai=False,isDrawing=True):
+        if isDrawing:
+            pg.init()
+            self.win = pg.display.set_mode((winX, winY))
+            Tetris.font = pg.font.Font('freesansbold.ttf', 32)
+            pg.key.set_repeat(100, 50)
+        return self.game(ai,isDrawing)
 
     def drawGUI(self):
         pg.draw.rect(self.win, (255,255,255), (50, 25, 500, winY-50), 1)
@@ -125,19 +125,22 @@ class Tetris:
                 return False
         return True
 
-    def game(self):
+    def game(self, ai, isDrawing):
         self.nextNumber = randint(0,6)
         self.generateNextPiece()
         counter = 0
-        ai = AI(1,1,1)
+        if ai:
+            self.clockSpeed = 0
         while self.run:
-            self.eventLoop()
+            if isDrawing:
+                self.eventLoop()
 
             if not self.gameOver():
                 self.run = False
             
-            ai.moveCalculator(self.activePiece, self.pieces)
-            ai.applyMove(self.activePiece, self.pieces)
+            if ai:
+                ai.moveCalculator(self.activePiece, self.pieces)
+                ai.applyMove(self.activePiece, self.pieces)
 
             if self.activePiece.isActive == False:
                 self.swapPieces()
@@ -147,7 +150,11 @@ class Tetris:
 
             
             self.lineClear()
-            self.drawAll()
+            if isDrawing:
+                self.drawAll()
+        
+        if ai:
+            return self.points
 
 if __name__ == '__main__':
     Tetris().start()

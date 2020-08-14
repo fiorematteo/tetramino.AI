@@ -1,4 +1,3 @@
-from main import Tetris
 from tetramino import *
 from validMove import *
 import copy as cp
