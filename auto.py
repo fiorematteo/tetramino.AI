@@ -1,5 +1,6 @@
 from main import Tetris, AI
 from time import time
+from sys import argv
 import matplotlib.pyplot as plt
 import concurrent.futures as future
 
@@ -28,9 +29,10 @@ class virtualPlayer:
             plt.show()
     
     def saveDataToFile(self, filename):
-        with open("files/"+filename+".txt","w") as file:
+        with open("files/"+filename+".csv","w") as file:
+            file.write("Cicle,Points,Holesfactors,Linesfactor,Heigthfactor\n")
             for inx in range(self.cicles):
-                file.write(f"|points = {self.data[0][inx]} | holef = {self.data[1][inx]} | linef = {self.data[2][inx]} | heightf = {self.data[3][inx]} |\n")
+                file.write(f"{inx},{self.data[0][inx]},{self.data[1][inx]},{self.data[2][inx]},{self.data[3][inx]}\n")
 
     def startAi(self, cicles : int, games: int, drawing = False):
         self.cicles = cicles
@@ -71,18 +73,23 @@ class virtualPlayer:
 
     def evolve(self,factors):
         for x in range(self.cicles):
+            t = time()
             gen1 = self.generation(factors[1]*self.evolveSpeed,factors[2],factors[3])
             gen2 = self.generation(factors[1],factors[2]*self.evolveSpeed,factors[3])
             gen3 = self.generation(factors[1],factors[2],factors[3]*self.evolveSpeed)
-            
+
             factors = max(gen1,gen2,gen3)
+            print(f"cicle {x} time {time()-t}s for {self.games*3} games")#debug
 
             for x in range(4):
                 self.data[x].append(factors[x])
         return factors
 
 vp = virtualPlayer()
-vp.startAi(3, 1)
-print(vp.data)
+
+if len(argv) == 3:
+    vp.startAi(int(argv[1]), int(argv[2]))
+else:
+    vp.startAi(5, 10, True)
 vp.plotData()
 vp.saveDataToFile('data')
