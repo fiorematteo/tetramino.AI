@@ -3,7 +3,6 @@ from time import time
 from sys import argv
 import matplotlib.pyplot as plt
 import concurrent.futures as futures
-import pudb;pu.db
 
 class virtualPlayer:
 
@@ -60,8 +59,12 @@ class virtualPlayer:
 
     def generation(self,holesFactor,linesFactor,heightFactor):
         points = 0
-        for x in range(self.games):
-            points+=Tetris().start(AI(holesFactor,linesFactor,heightFactor),self.drawing)
+        gamesList = []
+        with futures.ThreadPoolExecutor() as executor:
+            for x in range(self.games):
+                gamesList.append(executor.submit(Tetris().start,AI(holesFactor,linesFactor,heightFactor),self.drawing))
+            for game in gamesList:
+                points+=game.result()
         return (points/self.games,holesFactor,linesFactor,heightFactor)
         
     @staticmethod
