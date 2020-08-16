@@ -67,14 +67,6 @@ class virtualPlayer:
             points += Tetris().start(AI(holesFactor, linesFactor, heightFactor), self.drawing)
         return (points/self.games, holesFactor, linesFactor, heightFactor)
 
-    @staticmethod
-    def max(a, b, c):
-        if a[0] > b[0] and a[0] > c[0]:
-            return a
-        if b[0] > a[0] and b[0] > c[0]:
-            return b
-        return c
-
     def mt_generation(self, factors):  # multithread generation
         gens = []
         with futures.ThreadPoolExecutor() as executor:
