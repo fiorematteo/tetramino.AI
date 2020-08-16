@@ -100,6 +100,6 @@ vp = virtualPlayer()
 if len(argv) == 3:
     vp.startAi(int(argv[1]), int(argv[2]))
 else:
-    vp.startAi(5, 10, True)
+    vp.startAi(5, 10, False)
 vp.plotData()
 vp.saveDataToFile('data')
