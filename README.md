@@ -1,4 +1,4 @@
-# Tetris
+# Tetramino.AI
 ### *Tetris Played by an AI who is not really I*
 * Reason why this is cool:
   * It's nice
