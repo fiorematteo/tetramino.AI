@@ -1,16 +1,18 @@
 class validMove:
-    def __init__(self, x, y, nRotation, piece, pieces,holesFactor,linesFactor,heightFactor):
+    def __init__(self, x, y, nRotation, piece, pieces, holesFactor, linesFactor, heightFactor):
         self.x = x
         self.y = y
         self.nRotation = nRotation
         self.piece = piece
         self.pieces = pieces
-        self.score = self.calculate_score(holesFactor,linesFactor,heightFactor)
+        self.score = self.calculate_score(
+            holesFactor, linesFactor, heightFactor)
+
     @staticmethod
     def normalize(min, max, value):
         return value-min/max-min
 
-    def calculate_score(self,holesFactor,linesFactor,heightFactor):
+    def calculate_score(self, holesFactor, linesFactor, heightFactor):
         nHoles = 4
 
         flag = False
@@ -34,8 +36,8 @@ class validMove:
 
         for piece in self.pieces:
             grid.append(piece.y)
-        
-        for tetra in self.piece.tetras: 
+
+        for tetra in self.piece.tetras:
             grid.append(tetra.y)
 
         Y = 25
@@ -47,7 +49,7 @@ class validMove:
             for row in rows:
                 if item == row[0]:
                     row[1] += 1
-        
+
         for row in rows:
             if row[1] == 10:
                 linesCleared = 1
@@ -55,7 +57,7 @@ class validMove:
         maxY = -10
         for tetra in self.piece.tetras:
             maxY = tetra.y if tetra.y > maxY else maxY
-        maxY = self.normalize(0,1025,maxY)
-        nHoles = self.normalize(0,3,nHoles)
-        linesCleared = self.normalize(0,4,linesCleared)
+        maxY = self.normalize(0, 1025, maxY)
+        nHoles = self.normalize(0, 3, nHoles)
+        linesCleared = self.normalize(0, 4, linesCleared)
         return (maxY*heightFactor) + (linesCleared*linesFactor) - (nHoles*holesFactor)

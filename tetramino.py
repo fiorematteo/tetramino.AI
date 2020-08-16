@@ -1,10 +1,11 @@
 import pygame as pg
 
 winX = 1050
-winY = 1050  
+winY = 1050
+
 
 class rect:
-    
+
     def __init__(self, win, x, y, size, color):
         self.win = win
         self.x = x
@@ -15,21 +16,26 @@ class rect:
         self.marked = 0
 
     def draw(self):
-        pg.draw.rect(self.win, self.color, (self.x, self.y, self.width, self.height), 0)
-        pg.draw.rect(self.win, (255,255,255), (self.x, self.y, self.width, self.height), 1)
+        pg.draw.rect(self.win, self.color,
+                     (self.x, self.y, self.width, self.height), 0)
+        pg.draw.rect(self.win, (255, 255, 255),
+                     (self.x, self.y, self.width, self.height), 1)
+
 
 class tetramino:
 
-    T_shape = [[True, True, True],[False, True, False],[False, False, False]]
-    I_shape = [[False, False, False, False],[True, True, True, True],[False, False, False, False],[False, False, False, False]]
-    Z_shape = [[True, True, False],[False, True, True],[False, False, False]]
-    O_shape = [[True, True],[True, True]]
-    S_shape = [[False, True, True],[True, True, False],[False, False, False]]
-    L_shape = [[False, True, False],[False, True, False],[True, True, False]]
-    J_shape = [[False, True, False],[False, True, False],[False, True, True]]
+    T_shape = [[True, True, True], [False, True, False], [False, False, False]]
+    I_shape = [[False, False, False, False], [True, True, True, True], [
+        False, False, False, False], [False, False, False, False]]
+    Z_shape = [[True, True, False], [False, True, True], [False, False, False]]
+    O_shape = [[True, True], [True, True]]
+    S_shape = [[False, True, True], [True, True, False], [False, False, False]]
+    L_shape = [[False, True, False], [False, True, False], [True, True, False]]
+    J_shape = [[False, True, False], [False, True, False], [False, True, True]]
     shapes = [T_shape, L_shape, J_shape, S_shape, Z_shape, O_shape, I_shape]
 
-    colors = [(255, 0, 255), (255, 100, 100), (0, 0, 255),(0, 255, 0), (255, 0, 0), (255, 255, 0), (0, 0, 150)]
+    colors = [(255, 0, 255), (255, 100, 100), (0, 0, 255),
+              (0, 255, 0), (255, 0, 0), (255, 255, 0), (0, 0, 150)]
 
     def __init__(self, win, setup):
         self.win = win
@@ -54,8 +60,9 @@ class tetramino:
             minX = tetra.x if tetra.x < minX else minX
             maxX = tetra.x if tetra.x > maxX else maxX
         if self.x < 500:
-            pg.draw.line(self.win, (255,255,255),(minX,25),(minX,1025))
-            pg.draw.line(self.win, (255,255,255),(maxX+self.width,25),(maxX+self.width,1025))
+            pg.draw.line(self.win, (255, 255, 255), (minX, 25), (minX, 1025))
+            pg.draw.line(self.win, (255, 255, 255),
+                         (maxX+self.width, 25), (maxX+self.width, 1025))
 
     def generator(self):
         self.tetras = []
@@ -128,4 +135,3 @@ class tetramino:
             for tetra in self.tetras:
                 tetra.x += self.width
             self.x += self.width
-

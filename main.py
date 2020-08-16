@@ -1,13 +1,14 @@
-#esterni
+# esterni
 from random import randint
-#interni
+# interni
 from tetramino import *
 from AI import *
 
 #import pudb; pu.db
 
+
 class Tetris:
-    
+
     font = None
     clock = pg.time.Clock()
 
@@ -21,20 +22,21 @@ class Tetris:
         self.clockSpeed = 100
         self.nextNumber = 0
 
-    def start(self,ai=False,isDrawing=True):
+    def start(self, ai=False, isDrawing=True):
         if isDrawing:
             pg.init()
             self.win = pg.display.set_mode((winX, winY))
             Tetris.font = pg.font.Font('freesansbold.ttf', 32)
             pg.key.set_repeat(100, 50)
-        return self.game(ai,isDrawing)
+        return self.game(ai, isDrawing)
 
     def drawGUI(self):
-        pg.draw.rect(self.win, (255,255,255), (50, 25, 500, winY-50), 1)
-        pg.draw.rect(self.win, (255,255,255), (600, 100, 200, 200), 1)
+        pg.draw.rect(self.win, (255, 255, 255), (50, 25, 500, winY-50), 1)
+        pg.draw.rect(self.win, (255, 255, 255), (600, 100, 200, 200), 1)
 
     def drawTEXT(self):
-        text = Tetris.font.render(f'Points: {self.points}',True, (255, 255, 255), (0, 0, 0))
+        text = Tetris.font.render(
+            f'Points: {self.points}', True, (255, 255, 255), (0, 0, 0))
         textRect = text.get_rect()
         textRect.x, textRect.y = (600, 350)
         self.win.blit(text, textRect)
@@ -47,9 +49,9 @@ class Tetris:
         self.nextPiece.draw()
         self.drawTEXT()
         pg.display.flip()
-        self.win.fill((20,20,20))
+        self.win.fill((20, 20, 20))
         Tetris.clock.tick(self.clockSpeed)
-        
+
     def swapPieces(self):
         for tetra in self.activePiece.tetras:
             self.pieces.append(tetra)
@@ -57,12 +59,12 @@ class Tetris:
 
     def generateNextPiece(self):
         self.activePiece = tetramino(self.win, self.nextNumber)
-        self.nextNumber = randint(0,6)
+        self.nextNumber = randint(0, 6)
         self.nextPiece = tetramino(self.win, self.nextNumber)
         self.nextPiece.x = 600
         self.nextPiece.y = 100
         self.nextPiece.generator()
-        
+
     def eventLoop(self):
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
@@ -80,11 +82,11 @@ class Tetris:
                 self.run = False
 
     def lineClear(self):
-        lines={}
+        lines = {}
         points = 0
         for piece in self.pieces:
             if piece.y in lines:
-                lines[piece.y]+=1
+                lines[piece.y] += 1
             else:
                 lines[piece.y] = 1
 
@@ -109,7 +111,6 @@ class Tetris:
                 if t < line:
                     piece.y += piece.height
 
-        
         if points == 1:
             self.points += 40
         elif points == 2:
@@ -126,7 +127,7 @@ class Tetris:
         return True
 
     def game(self, ai, isDrawing):
-        self.nextNumber = randint(0,6)
+        self.nextNumber = randint(0, 6)
         self.generateNextPiece()
         counter = 0
         if ai:
@@ -137,7 +138,7 @@ class Tetris:
 
             if not self.gameOver():
                 self.run = False
-            
+
             if ai:
                 ai.moveCalculator(self.activePiece, self.pieces)
                 ai.applyMove(self.activePiece, self.pieces)
@@ -148,13 +149,13 @@ class Tetris:
                 self.activePiece.move(self.pieces)
             counter += 1
 
-            
             self.lineClear()
             if isDrawing:
                 self.drawAll()
-        
+
         if ai:
             return self.points
+
 
 if __name__ == '__main__':
     Tetris().start()
