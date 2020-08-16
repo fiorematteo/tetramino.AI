@@ -5,11 +5,12 @@ class validMove:
         self.nRotation = nRotation
         self.piece = piece
         self.pieces = pieces
-        self.score = self.score(holesFactor,linesFactor,heightFactor)
+        self.score = self.calculate_score(holesFactor,linesFactor,heightFactor)
     @staticmethod
     def normalize(min, max, value):
         return value-min/max-min
-    def score(self,holesFactor,linesFactor,heightFactor):
+
+    def calculate_score(self,holesFactor,linesFactor,heightFactor):
         nHoles = 4
 
         flag = False

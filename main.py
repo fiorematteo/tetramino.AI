@@ -77,7 +77,7 @@ class Tetris:
                 elif event.key == pg.K_DOWN:
                     self.activePiece.move(self.pieces)
             elif event.type == pg.QUIT:
-                slef.run = False
+                self.run = False
 
     def lineClear(self):
         lines={}
