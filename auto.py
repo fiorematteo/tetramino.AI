@@ -27,8 +27,7 @@ class virtualPlayer:
         ax2.legend(('holes', 'lines', 'heights'))
         if save:
             plt.savefig("files/lastplot.svg", format="svg")
-        else:
-            plt.show()
+        plt.show()
 
     def saveDataToFile(self, filename):
         with open("files/"+filename+".csv", "w") as file:
@@ -62,13 +61,10 @@ class virtualPlayer:
 
     def generation(self, holesFactor, linesFactor, heightFactor):
         points = 0
-        gamesList = []
-        with futures.ThreadPoolExecutor() as executor:
-            for x in range(self.games):
-                gamesList.append(executor.submit(Tetris().start, AI(
-                    holesFactor, linesFactor, heightFactor), self.drawing))
-            for game in gamesList:
-                points += game.result()
+        '''gamesList = []
+        with futures.ThreadPoolExecutor() as executor:'''
+        for x in range(self.games):
+            points += Tetris().start(AI(holesFactor, linesFactor, heightFactor), self.drawing)
         return (points/self.games, holesFactor, linesFactor, heightFactor)
 
     @staticmethod
@@ -80,27 +76,36 @@ class virtualPlayer:
         return c
 
     def mt_generation(self, factors):  # multithread generation
+        gens = []
         with futures.ThreadPoolExecutor() as executor:
-            gen1 = executor.submit(
-                self.generation, factors[1]*self.evolveSpeed, factors[2], factors[3])
-            gen2 = executor.submit(
-                self.generation, factors[1], factors[2]*self.evolveSpeed, factors[3])
-            gen3 = executor.submit(
-                self.generation, factors[1], factors[2], factors[3]*self.evolveSpeed)
-            return (gen1.result(), gen2.result(), gen3.result())
+            gens.append(executor.submit(
+                self.generation, factors[1]*self.evolveSpeed, factors[2], factors[3]))
+            gens.append(executor.submit(
+                self.generation, factors[1], factors[2]*self.evolveSpeed, factors[3]))
+            gens.append(executor.submit(
+                self.generation, factors[1], factors[2], factors[3]*self.evolveSpeed))
+            gens.append(executor.submit(
+                self.generation, factors[1]/self.evolveSpeed, factors[2], factors[3]))
+            gens.append(executor.submit(
+                self.generation, factors[1], factors[2]/self.evolveSpeed, factors[3]))
+            gens.append(executor.submit(
+                self.generation, factors[1], factors[2], factors[3]/self.evolveSpeed))
+
+            gens = list(map(lambda g: g.result(), gens))
+            scores = list(map(lambda g: g[0], gens))
+            return gens[scores.index(max(scores))]
 
     def evolve(self, factors):
         for x in range(self.cicles):
             t = time()
 
-            gen1, gen2, gen3 = self.mt_generation(factors)
-            #gen1 = self.generation(factors[1]*self.evolveSpeed,factors[2],factors[3])
-            #gen2 = self.generation(factors[1],factors[2]*self.evolveSpeed,factors[3])
-            #gen3 = self.generation(factors[1],factors[2],factors[3]*self.evolveSpeed)
+            # gen1 = self.generation(factors[1]*self.evolveSpeed,factors[2],factors[3])
+            # gen2 = self.generation(factors[1],factors[2]*self.evolveSpeed,factors[3])
+            # gen3 = self.generation(factors[1],factors[2],factors[3]*self.evolveSpeed)
 
-            factors = max(gen1, gen2, gen3)
+            factors = self.mt_generation(factors)
             # debug
-            print(f"cicle {x} time {time()-t}s for {self.games*3} games")
+            print(f"cicle {x} time {time()-t}s for {self.games*6} games")
 
             for x in range(4):
                 self.data[x].append(factors[x])
@@ -112,6 +117,6 @@ vp = virtualPlayer()
 if len(argv) >= 3:
     vp.startAi(int(argv[1]), int(argv[2]))
 else:
-    vp.startAi(5, 10, False)
+    vp.startAi(5, 1, True)
 vp.plotData(argv[3] if len(argv) == 4 else False)
 vp.saveDataToFile('data')
