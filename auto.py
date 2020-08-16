@@ -3,6 +3,7 @@ from time import time
 from sys import argv
 import matplotlib.pyplot as plt
 import concurrent.futures as futures
+import pudb;pu.db
 
 class virtualPlayer:
 

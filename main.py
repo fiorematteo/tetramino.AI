@@ -4,6 +4,8 @@ from random import randint
 from tetramino import *
 from AI import *
 
+#import pudb; pu.db
+
 class Tetris:
     
     font = None
