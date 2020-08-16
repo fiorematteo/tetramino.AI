@@ -2,7 +2,8 @@ from main import Tetris, AI
 from time import time
 from sys import argv
 import matplotlib.pyplot as plt
-import concurrent.futures as future
+import concurrent.futures as futures
+import pudb;pu.db
 
 class virtualPlayer:
 
@@ -71,12 +72,21 @@ class virtualPlayer:
             return b
         return c
 
+    def mt_generation(self,factors):#multithread generation
+        with futures.ThreadPoolExecutor() as executor:
+            gen1 = executor.submit(self.generation,factors[1]*self.evolveSpeed,factors[2],factors[3])
+            gen2 = executor.submit(self.generation,factors[1],factors[2]*self.evolveSpeed,factors[3])
+            gen3 = executor.submit(self.generation,factors[1],factors[2],factors[3]*self.evolveSpeed)
+            return (gen1.result(),gen2.result(),gen3.result())
+
     def evolve(self,factors):
         for x in range(self.cicles):
             t = time()
-            gen1 = self.generation(factors[1]*self.evolveSpeed,factors[2],factors[3])
-            gen2 = self.generation(factors[1],factors[2]*self.evolveSpeed,factors[3])
-            gen3 = self.generation(factors[1],factors[2],factors[3]*self.evolveSpeed)
+
+            gen1, gen2, gen3 = self.mt_generation(factors)
+            #gen1 = self.generation(factors[1]*self.evolveSpeed,factors[2],factors[3])
+            #gen2 = self.generation(factors[1],factors[2]*self.evolveSpeed,factors[3])
+            #gen3 = self.generation(factors[1],factors[2],factors[3]*self.evolveSpeed)
 
             factors = max(gen1,gen2,gen3)
             print(f"cicle {x} time {time()-t}s for {self.games*3} games")#debug
