@@ -1,4 +1,6 @@
 from main import Tetris, AI
+
+import numpy
 from time import time
 from sys import argv
 import matplotlib.pyplot as plt
@@ -14,12 +16,19 @@ class virtualPlayer:
         self.games = 0
         self.drawing = False
 
+    def calculate_regression(self, points, ncicles):
+        model = numpy.poly1d(numpy.polyfit(points, ncicles, 2))
+        line = numpy.linspace(0, len(ncicles)-1)
+        return line, model(line)
+
     def plotData(self, save=False):
         ncicle = range(self.cicles)
         fig, (ax1, ax2) = plt.subplots(1, 2)
-        ax1.plot(ncicle, self.data[0], label="points")
+        xreg, yreg = self.calculate_regression(self.data[0], ncicle)
+        ax1.plot(ncicle, self.data[0], "b", xreg, yreg, "r")
         ax1.set_xlabel("cicle")
         ax1.set_ylabel("points")
+        ax1.legend(('points', 'regression'))
         ax2.plot(ncicle, self.data[1], "r", ncicle,
                  self.data[2], "g", ncicle, self.data[3], "b")
         ax2.set_xlabel("cicle")
