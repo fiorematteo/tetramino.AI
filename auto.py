@@ -61,6 +61,7 @@ class virtualPlayer:
             print("factors not loaded from file")
 
         factors = self.evolve(factors)
+        print(f"\n   Best Result {factors[0]} \n")
 
         with open("files/setup.txt", "w") as file:
             for i in factors:
@@ -100,11 +101,9 @@ class virtualPlayer:
         for x in range(self.cicles):
             t = time()
 
-            # gen1 = self.generation(factors[1]*self.evolveSpeed,factors[2],factors[3])
-            # gen2 = self.generation(factors[1],factors[2]*self.evolveSpeed,factors[3])
-            # gen3 = self.generation(factors[1],factors[2],factors[3]*self.evolveSpeed)
-
-            factors = self.mt_generation(factors)
+            nfactors = self.mt_generation(factors)
+            if nfactors[0] > factors[0]:
+                factors = nfactors
             # debug
             print(f"cicle {x} time {time()-t}s for {self.games*6} games")
 
