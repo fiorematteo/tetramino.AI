@@ -12,4 +12,4 @@
 
 ### commands :
   1. main.py (start game normaly)
-  1. auto.py <cicle number> <game per generation> <[optional] save plot>
+  1. auto.py < cicle number> < game per generation> <[optional] save plot>
