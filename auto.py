@@ -101,9 +101,7 @@ class virtualPlayer:
         for x in range(self.cicles):
             t = time()
 
-            nfactors = self.mt_generation(factors)
-            if nfactors[0] > factors[0]:
-                factors = nfactors
+            factors = self.mt_generation(factors)
             # debug
             print(f"cicle {x} time {time()-t}s for {self.games*6} games")
 
